@@ -166,7 +166,7 @@ app.get("/api/ping", (req, res) => {
 });
 
 setInterval(() => {
-  fetch("https://yourapp.onrender.com/api/ping")
+  fetch("https://sweetlife-tsgc.onrender.com/api/ping")
     .then(() => console.log("Pinged self"))
     .catch(err => console.log("Error:", err.message));
 }, 600000); // every 10 minutes
