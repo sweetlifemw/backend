@@ -161,7 +161,7 @@ app.post("/api/logout", (req, res) => {
 });
 
 //ping
-app.get("/api/ping", (req, res) => {
+app.get("https://sweetlife-1cus.onrender.com/api/ping", (req, res) => {
   res.send("pong");
 });
 
