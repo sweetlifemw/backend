@@ -4,12 +4,13 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const fetch = require("node-fetch");
+
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: "*", credentials: true }));
+
 
 //  Load environment variables (Render reads from dashboard)
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://sweetlifemw6:hAaT3RsMHn2awIsG@cluster0.ah1jr0n.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Default to local MongoDB if not set
