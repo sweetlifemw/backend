@@ -20,7 +20,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "defaultsecretkey";
 console.log(process.env.MONGODB_URI);
 
 //  Connect to MongoDB
-mongoose.connect( MONGODB_URI)
+mongoose.connect( "mongodb+srv://sweetlifemw6:hAaT3RsMHn2awIsG@cluster0.ah1jr0n.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
   .then(() => console.log(" MongoDB connected"))
   .catch(err => {
     console.error(" MongoDB connection error:");
