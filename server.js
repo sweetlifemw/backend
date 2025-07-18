@@ -14,8 +14,10 @@ app.use(cors({ origin: "*", credentials: true }));
 
 
 //  Load environment variables (Render reads from dashboard)
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://sweetlifemw6:hAaT3RsMHn2awIsG@cluster0.ah1jr0n.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Default to local MongoDB if not set
+const MONGODB_URI =process.env.MONGODB_URI || "mongodb+srv://sweetlifemw6:hAaT3RsMHn2awIsG@cluster0.ah1jr0n.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Default to local MongoDB if not set
 const JWT_SECRET = process.env.JWT_SECRET || "defaultsecretkey";  
+
+console.log(process.env.MONGODB_URI);
 
 //  Connect to MongoDB
 mongoose.connect( MONGODB_URI)
