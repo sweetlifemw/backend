@@ -4,24 +4,18 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const fetch = require("node-fetch");
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin: true, credentials: true }));
 
-// ======= CONFIG (replace these or use env vars in Render) =======
-const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://sweetlifemw6:hAaT3RsMHn2awIsG@cluster0.ah1jr0n.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-const JWT_SECRET = process.env.JWT_SECRET || "your_super_secret_key";
-const SELF_URL = process.env.SELF_URL || "https://sweetlife-1cus.onrender.com"; // for pinging
+// Replace with your MongoDB URI
+mongoose.connect("mongodb+srv://sweetlifemw6:hAaT3RsMHn2awIsG@cluster0.ah1jr0n.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0");
 
-// ======= Connect DB =======
-mongoose.connect(MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch(err => console.error("❌ MongoDB error:", err));
+const JWT_SECRET = "your_super_secret_key";
 
-// ======= Schema =======
+// Schema
 const userSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
@@ -33,13 +27,15 @@ const userSchema = new mongoose.Schema({
   accountNumber: String,
   balance: { type: String, default: "00.00" }
 });
+
 const User = mongoose.model("User", userSchema);
 
-// ======= Helpers =======
+// Generate account number
 function generateAccountNumber() {
   return Math.floor(1000000000 + Math.random() * 9000000000).toString();
 }
 
+// Normalize phone number
 function normalizePhone(phone) {
   if (!phone) return "";
   phone = phone.trim();
@@ -50,6 +46,7 @@ function normalizePhone(phone) {
   return phone;
 }
 
+// Middleware to check token
 function verifyToken(req, res, next) {
   const token = req.cookies.token;
   if (!token) return res.status(401).json({ message: "Unauthorized" });
@@ -63,15 +60,15 @@ function verifyToken(req, res, next) {
   }
 }
 
-// ======= Routes =======
-
 // Register
 app.post("/api/register", async (req, res) => {
   try {
     const { firstName, lastName, username, phone, gender, district, password, confirmPassword } = req.body;
+
     if (!firstName || !lastName || !username || !phone || !gender || !district || !password || !confirmPassword) {
       return res.status(400).json({ message: "All fields are required" });
     }
+
     if (password.length < 6) return res.status(400).json({ message: "Password must be at least 6 characters" });
     if (password !== confirmPassword) return res.status(400).json({ message: "Passwords do not match" });
 
@@ -96,6 +93,7 @@ app.post("/api/register", async (req, res) => {
     await newUser.save();
 
     const token = jwt.sign({ id: newUser._id }, JWT_SECRET, { expiresIn: "7d" });
+
     res.cookie("token", token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
 
     res.status(201).json({
@@ -129,6 +127,7 @@ app.post("/api/login", async (req, res) => {
     if (!isMatch) return res.status(401).json({ message: "Invalid password" });
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
+
     res.cookie("token", token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
 
     res.json({
@@ -161,18 +160,19 @@ app.post("/api/logout", (req, res) => {
   res.json({ message: "Logged out successfully" });
 });
 
-// Ping route
+//ping
 app.get("/api/ping", (req, res) => {
   res.send("pong");
 });
 
-// Auto ping self every 10 minutes
 setInterval(() => {
-  fetch(`${SELF_URL}/api/ping`)
-    .then(() => console.log("✅ Self-pinged"))
-    .catch(err => console.log("❌ Ping error:", err.message));
-}, 600000);
+  fetch("https://yourapp.onrender.com/api/ping")
+    .then(() => console.log("Pinged self"))
+    .catch(err => console.log("Error:", err.message));
+}, 600000); // every 10 minutes
 
-// Start server
+
+
+// Start
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
