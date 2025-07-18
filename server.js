@@ -12,8 +12,8 @@ app.use(cookieParser());
 app.use(cors({ origin: true, credentials: true }));
 
 //  Load environment variables (Render reads from dashboard)
-const MONGODB_URI = process.env.MONGODB_URI;
-const JWT_SECRET = process.env.JWT_SECRET;
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://sweetlifemw6:hAaT3RsMHn2awIsG@cluster0.ah1jr0n.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Default to local MongoDB if not set
+const JWT_SECRET = process.env.JWT_SECRET || "defaultsecretkey";  
 
 //  Connect to MongoDB
 mongoose.connect( MONGODB_URI)
@@ -169,17 +169,6 @@ app.post("/api/logout", (req, res) => {
   res.clearCookie("token");
   res.json({ message: "Logged out successfully" });
 });
-
-//ping
-app.get("/api/ping", (req, res) => {
-  res.send("pong");
-});
-
-setInterval(() => {
-  fetch("https://sweetlife-tsgc.onrender.com/api/ping")
-    .then(() => console.log("Pinged self"))
-    .catch(err => console.log("Error:", err.message));
-}, 600000); // every 10 minutes
 
 
 
