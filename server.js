@@ -15,13 +15,13 @@ app.use(cors({ origin: "*", credentials: true }));
 
 
 //  Load environment variables (Render reads from dashboard)
-const MONGODB_URI =process.env.MONGODB_URI || "mongodb+srv://sweetlifemw6:hAaT3RsMHn2awIsG@cluster0.ah1jr0n.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Default to local MongoDB if not set
-const JWT_SECRET = process.env.JWT_SECRET || "defaultsecretkey";  
+const MONGODB_URI =process.env.MONGODB_URI;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 console.log(process.env.MONGODB_URI);
 
 //  Connect to MongoDB
-mongoose.connect( "mongodb+srv://sweetlifemw6:hAaT3RsMHn2awIsG@cluster0.ah1jr0n.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+mongoose.connect( MONGODB_URI)
   .then(() => console.log(" MongoDB connected"))
   .catch(err => {
     console.error(" MongoDB connection error:");
@@ -122,6 +122,11 @@ app.post("/api/register", async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 });
+// Keep-alive ping route for uptime monitoring
+app.get("/api/ping", (req, res) => {
+  res.status(200).send("pong");
+});
+
 
 // Login
 app.post("/api/login", async (req, res) => {
