@@ -11,10 +11,28 @@ const dotenv = require("dotenv").config()
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+
+const allowedOrigins = [
+  "http://127.0.0.1:5500",              // VS Code Live Server
+  "http://localhost:5500",              // Alternative
+  "http://192.168.197.231:5500",        // Your actual IP for phone access
+  "https://<yourusername>.github.io",   // Replace with your GitHub Pages URL
+  "https://sweetlife-1dpx.onrender.com" // Your backend URL (for Render)
+];
+
+// CORS middleware
 app.use(cors({
-  origin: "*",  // add exact origin
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      callback(new Error("CORS not allowed for this origin"));
+    }
+  },
   credentials: true
 }));
+
 
 
 
