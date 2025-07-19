@@ -11,7 +11,11 @@ const dotenv = require("dotenv").config()
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({
+  origin: ["http://127.0.0.1:5500", "https://yourfrontend.com"],  // add exact origin
+  credentials: true
+}));
+
 
 
 
@@ -110,7 +114,12 @@ app.post("/api/register", async (req, res) => {
 
     const token = jwt.sign({ id: newUser._id }, JWT_SECRET, { expiresIn: "7d" });
 
-    res.cookie("token", token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,               // required for cross-origin cookie in production
+      sameSite: "None",           // required for cross-origin cookie
+      maxAge: 7 * 24 * 60 * 60 * 1000
+      });
 
     res.status(201).json({
       message: "Account created successfully",
@@ -149,7 +158,12 @@ app.post("/api/login", async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
 
-    res.cookie("token", token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,               // required for cross-origin cookie in production
+      sameSite: "None",           // required for cross-origin cookie
+      maxAge: 7 * 24 * 60 * 60 * 1000
+});
 
     res.json({
       message: "Logged in successfully",
